@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Laufzeit-/Jobdaten
+jobs.json
+
+# Generierte Audiodateien
+output/
+input/
+
+# Lokale Modelle / große Modelldateien
+models/
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.safetensors
+
+# Virtuelle Python-Umgebungen
+.venv/
+venv/
+env/
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# Temporäre Dateien
+*.tmp
+*.temp
+*.log

@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>XTTS Web Interface</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    padding: 10px;
+    width: calc(100% - 20px);
+    background-color:silver;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+h2 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+
+
+
+.section {
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background-color:white;
+   
+}
+
+label {
+    display: block;
+    margin-top: 6px;
+}
+
+textarea {
+    width: 100%;
+    height: 120px;
+    resize: none;
+    box-sizing: border-box;
+}
+
+#text_editor {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    box-sizing: border-box;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    outline: none;
+    background: white;
+}
+
+#text_editor:focus {
+    border-color: #888;
+}
+
+#text_editor[contenteditable="false"] {
+    background-color: #e8e8e8;
+    color: #777;
+    cursor: default;
+}
+
+#text_editor:empty::before {
+    content: attr(placeholder);
+    color: #aaa;
+    pointer-events: none;
+}
+
+.sentence-too-long {
+    background-color: rgba(220, 53, 69, 0.15);
+    border-bottom: 2px solid #dc3545;
+    border-radius: 2px;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+
+input:disabled,
+textarea:disabled {
+    background-color: #e8e8e8;
+    color: #777;
+}
+
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+
+.radio-option input {
+    width: auto;
+    margin: 0;
+}
+
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+
+button {
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+
+audio {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.combobox {
+    position: relative;
+}
+
+
+.speaker-list {
+
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 10;
+
+}
+
+
+.speaker-item {
+
+    padding: 8px;
+    cursor: pointer;
+
+}
+
+
+.speaker-item:hover {
+
+    background-color: #eeeeee;
+
+}
+
+
+.left-column,
+.middle-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    background-color:silver;
+}
+
+
+
+.app-grid {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+    width: 100%;
+    background-color:silver;
+    
+}
+
+
+.app-grid > div {
+    min-width: 0;
+}
+
+
+
+
+
+
+
+
+
+.jobs {
+
+    min-height: 300px;
+
+}
+
+
+.job-item {
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    position: relative;
+
+    transition: transform 0.15s ease;
+
+
+}
+
+.job-item.moving {
+
+    background-color: #eef5ff;
+
+}
+
+
+.job-item.highlight {
+
+    animation: jobHighlight 2.5s ease;
+
+}
+
+
+@keyframes jobHighlight {
+
+    0% {
+        background-color: #b9dcff;
+    }
+
+    100% {
+        background-color: inherit;
+    }
+
+}
+
+
+.job-wartet {
+
+    background-color: #f8f8f8;
+
+}
+
+
+.job-rendert {
+
+    background-color: #fff3cd;
+    border-color: #e0b000;
+
+}
+
+
+.job-fertig {
+
+    background-color: #d4edda;
+    border-color: #28a745;
+
+}
+
+
+.job-abgebrochen {
+
+    background-color: #f8d7da;
+    border-color: #dc3545;
+
+}
+
+.job-angehalten{
+
+    background-color:#d6ecff;
+    border-color:#4aa3ff;
+
+}
+
+.job-fehler {
+
+    background-color: #f8d7da;
+    border-color: #b02a37;
+    border-width: 2px;
+
+}
+
+.job-vorbereitet {
+
+    background-color: #fff6e0;
+    border-color: #f5a623;
+
+}
+
+.preparing-hint {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    opacity: 0.85;
+    margin-top: 6px;
+
+}
+
+.preparing-dot {
+
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #f5a623;
+    display: inline-block;
+    animation: engine-pulse 1.2s infinite;
+
+}
+
+.engine-status {
+
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    font-size: 13px;
+    z-index: 100;
+
+}
+
+.engine-status-dot {
+
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #9aa0a6;
+    display: inline-block;
+
+}
+
+.engine-status.idle .engine-status-dot {
+    background-color: #9aa0a6;
+}
+
+.engine-status.preparing .engine-status-dot {
+    background-color: #f5a623;
+}
+
+.engine-status.rendering {
+    background-color: #e6f7ec;
+}
+
+.engine-status.rendering .engine-status-dot {
+    background-color: #2ecc71;
+    box-shadow: 0 0 0 rgba(46, 204, 113, 0.6);
+    animation: engine-pulse 1.2s infinite;
+}
+
+.engine-status.error {
+    background-color: #f8d7da;
+}
+
+.engine-status.error .engine-status-dot {
+    background-color: #dc3545;
+}
+
+.engine-status.stopped .engine-status-dot {
+    background-color: #6c757d;
+}
+
+.engine-status.stopped {
+    background-color: #f0f0f0;
+}
+
+.engine-status.offline .engine-status-dot {
+    background-color: #adb5bd;
+}
+
+.engine-btn {
+    margin-left: 6px;
+    padding: 2px 10px;
+    border: none;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.engine-btn.start {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.engine-btn.stop {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.engine-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+@keyframes engine-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(46, 204, 113, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+}
+
+.job-move-buttons {
+
+    position: absolute;
+    right: 8px;
+    top: 6px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+
+}
+
+.toggle-btn {
+
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.4;
+    padding: 0 4px;
+    line-height: 1;
+    color: inherit;
+    transition: opacity 0.15s;
+
+}
+
+.toggle-btn:hover {
+    opacity: 0.9;
+}
+
+.job-header {
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+
+}
+
+.job-details {
+
+    display: none;
+    margin: 4px 0 6px 0;
+    font-size: 13px;
+    opacity: 0.85;
+
+}
+
+/* Schlankerer Audioplayer */
+audio {
+    width: 100%;
+    height: 32px;
+    margin-top: 6px;
+    border-radius: 4px;
+}
+
+.progress-container {
+
+    width: 100%;
+    height: 12px;
+    background-color: #e5e5e5;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 8px;
+
+}
+
+
+.progress-bar {
+
+    height: 100%;
+    width: 0%;
+    background-color: black;
+    transition: width 0.2s linear;
+
+}
+
+
+.move-button {
+
+    width: 28px;
+    height: 24px;
+    padding: 0;
+
+    font-size: 14px;
+
+}
+
+.job-button {
+
+    width: auto;
+    padding: 4px 12px;
+    margin-top: 5px;
+    font-size: 13px;
+
+}
+
+
+
+@media(max-width:1000px){
+
+    .app-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+#text_stats {
+
+    margin-top: 8px;
+    padding: 8px;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #555;
+
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="engine-status" id="engineStatus">
+    <span class="engine-status-dot" id="engineStatusDot"></span>
+    <span id="engineStatusText">Verbinde...</span>
+    <button class="engine-btn" id="engineBtn" onclick="toggleEngine()" style="display:none">–</button>
+</div>
+
+<h1>XTTS Web Interface</h1>
+<div class="app-grid">
+
+
+<div class="left-column">
+
+<div class="section">
+
+<h2>Textquelle</h2>
+
+
+<div class="radio-option">
+
+<input 
+type="radio"
+id="text_input_mode"
+name="textmode"
+checked>
+
+<label for="text_input_mode">
+Text eingeben
+</label>
+
+</div>
+
+
+<label>Text:</label>
+
+<div
+id="text_editor"
+contenteditable="true"
+spellcheck="true"
+placeholder="Text für die Sprachausgabe..."></div>
+
+<textarea
+id="text_area"
+style="display:none"
+placeholder="Text für die Sprachausgabe...">
+</textarea>
+
+<div id="text_stats">
+
+Datei: -
+<br>
+Zeichen: 0
+<br>
+Wörter: 0
+<br>
+Absätze: 0
+
+</div>
+
+
+<div class="radio-option">
+
+<input 
+type="radio"
+id="file_input_mode"
+name="textmode">
+
+<label for="file_input_mode">
+Textdatei verwenden
+</label>
+
+</div>
+
+
+
+<label>Textdatei:</label>
+
+<input
+id="text_file"
+type="file"
+accept=".txt">
+
+
+</div>
+
+
+<div class="section">
+
+<h2>Sprecher</h2>
+
+
+<div class="radio-option">
+
+<input
+type="radio"
+id="standard_speaker"
+name="speaker"
+checked>
+
+<label for="standard_speaker">
+XTTS Standardspeaker
+</label>
+
+</div>
+
+
+<label>Standardspeaker:</label>
+
+<div class="combobox">
+
+<input 
+id="speaker_search"
+type="text"
+placeholder="Sprecher suchen..."
+autocomplete="off">
+
+<div 
+id="speaker_list"
+class="speaker-list">
+
+</div>
+
+</div>
+
+
+<input 
+id="speaker_value"
+type="hidden"
+value="Damien_Black">
+
+
+
+<h3>Stimmen Vorschau</h3>
+
+
+<audio 
+id="speaker_preview"
+controls>
+
+<source 
+src="http://<ip-address>:8011/voices/Damien_Black.wav"
+type="audio/wav">
+
+</audio>
+
+
+
+<div class="radio-option">
+
+<input
+type="radio"
+id="custom_speaker"
+name="speaker">
+
+<label for="custom_speaker">
+Eigene Stimme
+</label>
+
+</div>
+
+
+
+<label>
+Eigene Stimmsample-Datei:
+</label>
+
+
+<input
+id="voice_sample"
+type="file"
+accept=".wav">
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<div class="middle-column">
+<div class="section">
+
+
+<h2>Preset</h2>
+
+
+<select id="preset">
+
+<option value="ruhig">
+Ruhig / Erzähler
+</option>
+
+<option value="lebhaft">
+Lebhaft
+</option>
+
+<option value="stabil">
+Stabil
+</option>
+
+<option value="custom">
+Benutzerdefiniert
+</option>
+
+</select>
+
+
+</div>
+
+
+<div class="section">
+
+<h2>Sprache</h2>
+
+<select id="language">
+<option value="de">Deutsch (de)</option>
+<option value="en">Englisch (en)</option>
+<option value="fr">Französisch (fr)</option>
+<option value="es">Spanisch (es)</option>
+<option value="it">Italienisch (it)</option>
+<option value="pt">Portugiesisch (pt)</option>
+<option value="pl">Polnisch (pl)</option>
+<option value="tr">Türkisch (tr)</option>
+<option value="ru">Russisch (ru)</option>
+<option value="nl">Niederländisch (nl)</option>
+<option value="cs">Tschechisch (cs)</option>
+<option value="ar">Arabisch (ar)</option>
+<option value="zh-cn">Chinesisch (zh-cn)</option>
+<option value="hu">Ungarisch (hu)</option>
+<option value="ko">Koreanisch (ko)</option>
+<option value="ja">Japanisch (ja)</option>
+</select>
+
+</div>
+
+
+<div class="section">
+
+
+<h2>XTTS Einstellungen</h2>
+
+
+<div class="settings-grid">
+
+
+
+<div>
+
+<label>
+Speed
+</label>
+
+<input
+id="speed"
+type="number"
+value="0.80"
+step="0.05"
+disabled>
+
+</div>
+
+
+
+<div>
+
+<label>
+Temperature
+</label>
+
+<input
+id="temperature"
+type="number"
+value="0.60"
+step="0.05"
+disabled>
+
+</div>
+
+
+
+
+<div>
+
+<label>
+Top K
+</label>
+
+<input
+id="top_k"
+type="number"
+value="50"
+disabled>
+
+</div>
+
+
+
+
+<div>
+
+<label>
+Top P
+</label>
+
+<input
+id="top_p"
+type="number"
+value="0.85"
+step="0.05"
+disabled>
+
+</div>
+
+
+
+
+<div>
+
+<label>
+Repetition Penalty
+</label>
+
+<input
+id="repetition"
+type="number"
+value="5.0"
+step="0.1"
+disabled>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="section">
+
+<h2>Rendering</h2>
+
+<label>
+Ausgabedateiname: <span style="font-size:11px; opacity:0.6;">(wird automatisch vorausgefüllt, änderbar)</span>
+</label>
+
+<input
+id="output_filename"
+type="text"
+placeholder="wird beim Absenden automatisch generiert">
+
+
+<button id="add_job_button">
+Job hinzufügen
+</button>
+
+
+
+
+
+</div>  <!-- Rendering section schließen -->
+
+
+</div> <!-- middle-column schließen -->
+
+
+
+
+
+<div class="right-column">
+
+
+<div class="section jobs">
+
+<h2>Render Jobs</h2>
+
+<div id="job_list">
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+</div> <!-- app-grid schließen -->
+
+
+
+<script>
+
+
+
+
+
+
+const speakers = [
+"Aaron_Dreschner","Abrahan_Mack","Adde_Michal","Alexandra_Hisakawa",
+"Alison_Dietlinde","Alma_Mar_a","Ana_Florence","Andrew_Chipper",
+"Annmarie_Nele","Asya_Anara","Badr_Odhiambo","Baldur_Sanjin",
+"Barbora_MacLean","Brenda_Stern","Camilla_Holmstr_m","Chandra_MacFarland",
+"Claribel_Dervla","Craig_Gutsy","Daisy_Studious","Damien_Black",
+"Damjan_Chapman","Dionisio_Schuyler","Eugenio_Matarac_","Ferran_Simen",
+"Filip_Traverse","Gilberto_Mathias","Gitta_Nikolina","Gracie_Wise",
+"Henriette_Usha","Ige_Behringer","Ilkin_Urbano","Kazuhiko_Atallah",
+"Kumar_Dahl","Lidiya_Szekeres","Lilya_Stainthorpe","Luis_Moray",
+"Ludvig_Milivoj","Maja_Ruoho","Marcos_Rudaski","Narelle_Moon",
+"Nova_Hogarth","Rosemary_Okafor","Royston_Min","Sofia_Hellen",
+"Suad_Qasim","Szofi_Granger","Tammy_Grit","Tammie_Ema",
+"Tanja_Adelina","Torcull_Diarmuid","Uta_Obando","Viktor_Eka",
+"Viktor_Menelaos","Vjollca_Johnnie","Wulf_Carlevaro","Xavier_Hayasaka",
+"Zacharie_Aimilios","Zofija_Kendrick"
+];
+
+
+const search =
+document.getElementById(
+"speaker_search"
+);
+
+
+const list =
+document.getElementById(
+"speaker_list"
+);
+
+
+const value =
+document.getElementById(
+"speaker_value"
+);
+
+
+const preview =
+document.getElementById(
+"speaker_preview"
+);
+
+const outputFilename =
+document.getElementById("output_filename");
+
+function showSpeakers(filter=""){
+
+
+list.innerHTML="";
+
+
+speakers
+
+.filter(name =>
+name
+.toLowerCase()
+.includes(
+filter.toLowerCase()
+)
+)
+
+.forEach(name=>{
+
+
+let item =
+document.createElement(
+"div"
+);
+
+
+item.className =
+"speaker-item";
+
+
+item.textContent =
+name.replaceAll("_"," ");
+
+
+item.onclick =
+function(){
+
+
+search.value =
+name.replaceAll("_"," ");
+
+
+value.value =
+name;
+
+
+preview.src =
+BACKEND + "/voices/" + name + ".wav";
+
+
+preview.load();
+
+
+list.innerHTML="";
+
+updateFilenamePreview();
+
+
+};
+
+
+list.appendChild(item);
+
+
+});
+
+
+}
+
+
+
+search.addEventListener(
+"focus",
+function(){
+
+showSpeakers();
+
+});
+
+
+search.addEventListener(
+"input",
+function(){
+
+showSpeakers(this.value);
+
+});
+
+document.addEventListener(
+"click",
+function(event){
+
+    const combobox =
+    document.querySelector(".combobox");
+
+
+    if(!combobox.contains(event.target)){
+
+        list.innerHTML = "";
+
+    }
+
+});
+
+search.addEventListener(
+"blur",
+function(){
+
+    setTimeout(function(){
+
+        search.value =
+        value.value.replaceAll("_"," ");
+
+    },200);
+
+});
+/* ---------------------------
+   Presets
+---------------------------- */
+
+
+const presets = {
+
+
+ruhig: {
+
+speed:0.80,
+temperature:0.60,
+top_k:50,
+top_p:0.85,
+repetition:5.0
+
+},
+
+
+lebhaft: {
+
+speed:1.00,
+temperature:0.80,
+top_k:50,
+top_p:0.90,
+repetition:5.0
+
+},
+
+
+stabil: {
+
+speed:0.85,
+temperature:0.50,
+top_k:40,
+top_p:0.80,
+repetition:6.0
+
+}
+
+
+};
+
+
+
+const presetSelect =
+document.getElementById("preset");
+
+
+const fields = [
+
+"speed",
+"temperature",
+"top_k",
+"top_p",
+"repetition"
+
+];
+
+
+
+function applyPreset(name){
+
+
+if(name==="custom"){
+
+
+fields.forEach(id=>{
+
+document.getElementById(id).disabled=false;
+
+});
+
+
+return;
+
+}
+
+
+
+fields.forEach(id=>{
+
+document.getElementById(id).disabled=true;
+
+});
+
+
+
+let p = presets[name];
+
+
+document.getElementById("speed").value=p.speed;
+document.getElementById("temperature").value=p.temperature;
+document.getElementById("top_k").value=p.top_k;
+document.getElementById("top_p").value=p.top_p;
+document.getElementById("repetition").value=p.repetition;
+
+
+}
+
+
+
+presetSelect.addEventListener(
+"change",
+function(){
+
+applyPreset(this.value);
+updateFilenamePreview();
+
+});
+
+
+applyPreset("ruhig");
+
+
+
+
+
+
+
+/* ---------------------------
+   Text Auswahl
+---------------------------- */
+
+
+const textInputMode =
+document.getElementById("text_input_mode");
+
+
+const fileInputMode =
+document.getElementById("file_input_mode");
+
+
+const textArea =
+document.getElementById("text_area");
+
+const textEditor =
+document.getElementById("text_editor");
+
+const XTTS_LIMIT = 253;
+
+function highlightLongSentences(text){
+    // Sätze aufteilen, zu lange rot markieren
+    const parts = text.split(/(?<=[.!?])\s+/);
+    return parts.map((sentence, i) => {
+        const isLast = i === parts.length - 1;
+        const suffix = isLast ? "" : " ";
+        if(sentence.length > XTTS_LIMIT){
+            return "<span class='sentence-too-long'>" +
+                sentence.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") +
+                "</span>" + suffix;
+        }
+        return sentence.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") + suffix;
+    }).join("");
+}
+
+function getEditorText(){
+    return textEditor.innerText || "";
+}
+
+// Cursor-Position merken und wiederherstellen
+function saveCursor(){
+    const sel = window.getSelection();
+    if(!sel.rangeCount) return null;
+    const range = sel.getRangeAt(0);
+    const preRange = document.createRange();
+    preRange.selectNodeContents(textEditor);
+    preRange.setEnd(range.startContainer, range.startOffset);
+    return preRange.toString().length;
+}
+
+function restoreCursor(pos){
+    const walker = document.createTreeWalker(textEditor, NodeFilter.SHOW_TEXT);
+    let node, remaining = pos;
+    while((node = walker.nextNode())){
+        if(remaining <= node.textContent.length){
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.setStart(node, remaining);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            return;
+        }
+        remaining -= node.textContent.length;
+    }
+}
+
+let isUpdating = false;
+
+function updateEditorHighlight(){
+    if(isUpdating) return;
+    const text = getEditorText();
+    const cursorPos = saveCursor();
+    isUpdating = true;
+    textEditor.innerHTML = highlightLongSentences(text);
+    isUpdating = false;
+    if(cursorPos !== null) restoreCursor(cursorPos);
+
+    // Textarea synchron halten (wird für den fetch-Body verwendet)
+    textArea.value = text;
+    updateTextStats(text);
+}
+
+textEditor.addEventListener("input", updateEditorHighlight);
+
+// Paste: nur Plaintext einfügen
+textEditor.addEventListener("paste", function(e){
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+    document.execCommand("insertText", false, text);
+});
+
+// disabled-Zustand weiterleiten
+function setEditorDisabled(disabled){
+    textEditor.contentEditable = disabled ? "false" : "true";
+}
+
+
+const textFile =
+document.getElementById("text_file");
+let totalChars = 0;
+
+let jobs = [];
+
+let lastJobs = "";
+
+let jobCounter = 1;
+
+const BACKEND = "http://<ip-address>:8011";
+const WATCHDOG = "http://<ip-address>:8012";
+
+// Watchdog-Status: null = unbekannt, "stopped", "starting", "running"
+let engineContainerState = null;
+
+
+const addJobButton =
+document.getElementById("add_job_button");
+
+
+const jobList =
+document.getElementById("job_list");
+
+function updateFilenamePreview(){
+
+    // Vorschlag nur setzen wenn das Feld noch leer ist oder noch einen
+    // automatisch generierten Vorschlag enthält (erkennbar am Sprecher-Namen drin)
+    const field = outputFilename;
+    const speaker = value.value
+        ? value.value.replaceAll(" ", "_")
+        : "Sprecher";
+    const preset = presetSelect.value || "custom";
+
+    field.value = speaker + "_" + preset;
+
+}
+
+
+function generateFilename(name){
+
+    let now = new Date();
+
+    let timestamp =
+        now.getFullYear() + "-" +
+        String(now.getMonth()+1).padStart(2,"0") + "-" +
+        String(now.getDate()).padStart(2,"0") + "_" +
+        String(now.getHours()).padStart(2,"0") + "-" +
+        String(now.getMinutes()).padStart(2,"0") + "-" +
+        String(now.getSeconds()).padStart(2,"0");
+
+
+    if(!name.toLowerCase().endsWith(".wav")){
+        name += ".wav";
+    }
+
+
+    let base =
+        name.substring(0, name.length - 4);
+
+
+    return base + "_" + timestamp + ".wav";
+
+}
+
+addJobButton.addEventListener("click", async function () {
+
+    const response = await fetch(BACKEND + "/render", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            text: textArea.value,
+            speaker: value.value.replaceAll("_", " "),
+            language: document.getElementById("language").value,
+            speed: parseFloat(document.getElementById("speed").value),
+            temperature: parseFloat(document.getElementById("temperature").value),
+            top_k: parseInt(document.getElementById("top_k").value),
+            top_p: parseFloat(document.getElementById("top_p").value),
+            repetition_penalty: parseFloat(document.getElementById("repetition").value),
+            preset_name: presetSelect.value,
+            chars: textArea.value.length,
+            custom_filename: outputFilename.value.trim() || null
+
+        })
+
+    });
+
+    const result = await response.json();
+
+    if(!response.ok){
+        alert("Fehler: " + (result.detail || "Job konnte nicht erstellt werden"));
+        return;
+    }
+
+    console.log(result);
+
+    const job = {
+
+        id: result.job_id,
+
+        filename: textFile.files[0]
+            ? textFile.files[0].name
+            : "Manueller Text",
+
+        chars: textArea.value.length,
+
+        speaker: value.value.replaceAll("_", " "),
+
+        preset: presetSelect.value,
+
+        speed: document.getElementById("speed").value,
+
+        temperature: document.getElementById("temperature").value,
+
+        top_k: document.getElementById("top_k").value,
+
+        top_p: document.getElementById("top_p").value,
+
+        repetition: document.getElementById("repetition").value,
+
+        output: generateFilename(
+            outputFilename.value.trim() ||
+            value.value.replaceAll(" ", "_") + "_" + presetSelect.value
+        ),
+
+        status: "Wartet"
+
+    };
+
+ await loadJobs();  
+
+});
+
+async function loadJobs(){
+
+    try {
+
+        const response =
+            await fetch(BACKEND + "/jobs");
+
+        const newJobs =
+            await response.json();
+
+        const json =
+            JSON.stringify(newJobs);
+
+        if(json === lastJobs){
+            return;
+        }
+
+        lastJobs = json;
+
+        jobs = newJobs;
+
+        updateEngineStatus();
+        renderJobs();
+
+    } catch(e) {
+        // Backend nicht erreichbar – kein Fehler in der Konsole, Watchdog zeigt den Status
+    }
+
+}
+
+
+function updateEngineStatus(){
+
+    const el = document.getElementById("engineStatus");
+    const text = document.getElementById("engineStatusText");
+    const btn = document.getElementById("engineBtn");
+
+    el.classList.remove("idle", "preparing", "rendering", "error", "stopped", "offline");
+
+    // Wenn Watchdog nicht erreichbar
+    if(engineContainerState === null){
+        el.classList.add("offline");
+        text.textContent = "Watchdog nicht erreichbar";
+        btn.style.display = "none";
+        return;
+    }
+
+    // Container werden gerade gestoppt
+    if(engineContainerState === "stopping"){
+        el.classList.add("preparing");
+        text.textContent = "Engine stoppt...";
+        btn.style.display = "none";
+        return;
+    }
+
+    // Container gestoppt
+    if(engineContainerState === "stopped"){
+        el.classList.add("stopped");
+        text.textContent = "Engine gestoppt";
+        btn.textContent = "Starten";
+        btn.className = "engine-btn start";
+        btn.disabled = false;
+        btn.style.display = "inline-block";
+        return;
+    }
+
+    // Container fahren gerade hoch
+    if(engineContainerState === "starting"){
+        el.classList.add("preparing");
+        text.textContent = "Engine startet...";
+        btn.style.display = "none";
+        return;
+    }
+
+    // Container laufen – jetzt Rendering-Status aus Jobliste
+    const rendering = jobs.some(j => j.status === "Rendert");
+    const preparing = jobs.some(j => j.status === "Wird vorbereitet");
+    const errored = jobs.some(j => j.status === "Fehler");
+
+    btn.textContent = "Stoppen";
+    btn.className = "engine-btn stop";
+    btn.disabled = false;
+    btn.style.display = "inline-block";
+
+    if(rendering){
+        el.classList.add("rendering");
+        text.textContent = "Rendert";
+    } else if(preparing){
+        el.classList.add("preparing");
+        text.textContent = "Bereitet vor...";
+    } else if(errored){
+        el.classList.add("error");
+        text.textContent = "Fehler aufgetreten";
+    } else {
+        el.classList.add("idle");
+        text.textContent = "Bereit";
+    }
+
+}
+
+
+async function pollWatchdog(){
+    // Während eines laufenden Stop-Vorgangs nicht pollen –
+    // toggleEngine setzt den Zustand nach dem await selbst korrekt.
+    if(engineContainerState === "stopping") return;
+
+    try {
+        const r = await fetch(WATCHDOG + "/engine/status", { signal: AbortSignal.timeout(3000) });
+        const data = await r.json();
+        engineContainerState = data.engine;
+    } catch(e) {
+        engineContainerState = null;
+    }
+    updateEngineStatus();
+}
+
+
+async function toggleEngine(){
+    const btn = document.getElementById("engineBtn");
+    btn.disabled = true;
+
+    if(engineContainerState === "stopped"){
+        btn.textContent = "Startet...";
+        await fetch(WATCHDOG + "/engine/start", { method: "POST" });
+        engineContainerState = "starting";
+    } else {
+        btn.textContent = "Stoppt...";
+        engineContainerState = "stopping";
+        updateEngineStatus();
+        await fetch(WATCHDOG + "/engine/stop", { method: "POST" });
+        engineContainerState = "stopped";
+    }
+
+    updateEngineStatus();
+}
+
+
+
+function renderJobs(){
+
+jobList.style.opacity = "0";
+
+jobList.innerHTML="";
+
+
+jobs.forEach((job, index)=>{
+
+
+const div =
+document.createElement("div");
+
+
+div.className="job-item";
+
+
+if(job.status === "Wartet"){
+    div.classList.add("job-wartet");
+}
+
+if(job.status === "Wird vorbereitet"){
+    div.classList.add("job-vorbereitet");
+}
+
+if(job.status === "Rendert"){
+    div.classList.add("job-rendert");
+}
+
+if(job.status === "Fertig"){
+    div.classList.add("job-fertig");
+}
+
+if(job.status === "Abgebrochen"){
+    div.classList.add("job-abgebrochen");
+}
+
+if(job.status === "Angehalten"){
+    div.classList.add("job-angehalten");
+}
+
+if(job.status === "Fehler"){
+    div.classList.add("job-fehler");
+}
+
+
+let buttons = "";
+
+let moveButtons = "";
+
+
+
+
+if(job.status === "Wartet" || job.status === "Fertig"){
+
+moveButtons +=
+"<div class='job-move-buttons'>";
+
+moveButtons +=
+"<button class='move-button' onclick='moveJobUp(" + job.id + ")'>⬆</button>";
+
+moveButtons +=
+"<button class='move-button' onclick='moveJobDown(" + job.id + ")'>⬇</button>";
+
+moveButtons +=
+"</div>";
+}
+
+
+if(job.status === "Wartet"){
+
+    buttons +=
+    "<button class='job-button' onclick='holdJob(" + job.id + ")'>" +
+    "Anhalten" +
+    "</button>";
+
+    buttons +=
+    "<button class='job-button' onclick='deleteJob(" + job.id + ")'>" +
+    "Löschen" +
+    "</button>";
+
+}
+
+
+if(job.status === "Wird vorbereitet"){
+
+    buttons +=
+    "<div class='preparing-hint'>" +
+        "<span class='preparing-dot'></span>" +
+        "Wird vorbereitet (Modell lädt evtl. noch)..." +
+    "</div>";
+
+    buttons +=
+    "<button class='job-button' onclick='cancelJob(" + job.id + ")'>" +
+    "Abbrechen" +
+    "</button>";
+
+    buttons +=
+    "<button class='job-button' onclick='deleteJob(" + job.id + ")'>" +
+    "Löschen" +
+    "</button>";
+
+}
+
+if(job.status === "Rendert"){
+
+
+    buttons +=
+    "<div class='progress-container'>" +
+        "<div class='progress-bar' id='progress_" + job.id + "' style='width:" + (job.progress || 0) + "%;'></div>" +
+    "</div>" +
+    "<div style='font-size:12px; opacity:0.8;'>" + (job.progress || 0) + "%</div>";
+
+
+    buttons +=
+    "<button class='job-button' onclick='cancelJob(" + job.id + ")'>" +
+    "Job abbrechen" +
+    "</button>";
+
+}
+
+if(job.status === "Abgebrochen"){
+
+
+
+
+    buttons +=
+    "<button class='job-button' onclick='deleteJob(" + job.id + ")'>" +
+    "Löschen" +
+    "</button>";
+
+}
+
+if(job.status === "Angehalten"){
+
+    buttons +=
+    "<button class='job-button' onclick='resumeJob(" + job.id + ")'>" +
+    "Fortsetzen" +
+    "</button>";
+
+    buttons +=
+    "<button class='job-button' onclick='deleteJob(" + job.id + ")'>" +
+    "Löschen" +
+    "</button>";
+
+}
+
+if(job.status === "Fehler"){
+
+    buttons +=
+    "<button class='job-button' onclick='resumeJob(" + job.id + ")'>" +
+    "Erneut versuchen" +
+    "</button>";
+
+    buttons +=
+    "<button class='job-button' onclick='deleteJob(" + job.id + ")'>" +
+    "Löschen" +
+    "</button>";
+
+}
+
+
+
+if(job.status === "Fertig"){
+
+    const audioUrl = BACKEND + job.output;
+
+    buttons +=
+    "<audio controls style='width:100%; margin-top:10px;'>" +
+    "<source src='" + audioUrl + "' type='audio/wav'>" +
+    "</audio>";
+
+    buttons +=
+    "<button class='job-button' onclick='downloadAudio(\"" + audioUrl + "\", \"" + job.output.split("/").pop() + "\")'>" +
+    "WAV herunterladen" +
+    "</button>";
+
+    buttons +=
+    "<button class='job-button' onclick='deleteJob(" + job.id + ")'>" +
+    "Löschen" +
+    "</button>";
+
+}
+
+div.innerHTML =
+
+moveButtons +
+"<div class='job-header'>" +
+    "<span><b>ID: " + job.id + "</b> · Anzeige: " + (index + 1) + "</span>" +
+    "<button class='toggle-btn' onclick='toggleJobDetails(" + job.id + ")' title='Details'>›</button>" +
+"</div>" +
+
+"<div class='job-details' id='job-details-" + job.id + "'>" +
+"<div>Zeichen: " + (job.chars || job.text?.length || "–") + "</div>" +
+"<div>Sprecher: " + (job.speaker || "–") + "</div>" +
+"<div>Sprache: " + (job.language || "–") + "</div>" +
+"<div>Preset: " + (job.preset_name || "–") + "</div>" +
+"<div>Ausgabe: " + job.output.split("/").pop() + "</div>" +
+"</div>" +
+
+"<div>Status: " + job.status + "</div>" +
+
+buttons; 
+
+
+
+
+
+jobList.appendChild(div);
+
+// Aufgeklappten Zustand wiederherstellen
+const details = div.querySelector(".job-details");
+const btn = div.querySelector(".toggle-btn");
+if(details && btn){
+    if(expandedJobs.has(job.id)){
+        details.style.display = "block";
+        btn.textContent = "▾";
+    } else {
+        details.style.display = "none";
+        btn.textContent = "›";
+    }
+}
+
+
+});
+setTimeout(()=>{
+    jobList.style.opacity="1";
+},50);
+
+
+}
+
+// Hinweis: Das Starten von Jobs übernimmt jetzt automatisch der render_worker
+// im Backend (siehe app.py) - der erste Job mit Status "Wartet" wird von
+// selbst gerendert, sobald kein anderer Job mehr läuft.
+
+
+ 
+
+
+
+
+// Merkt sich welche Jobs ausgeklappt sind (per ID)
+const expandedJobs = new Set();
+
+function toggleJobDetails(jobId){
+
+    const details = document.getElementById("job-details-" + jobId);
+    const header = details?.previousElementSibling;
+    const btn = header?.querySelector(".toggle-btn");
+
+    if(!details) return;
+
+    if(expandedJobs.has(jobId)){
+        expandedJobs.delete(jobId);
+        details.style.display = "none";
+        if(btn) btn.textContent = "›";
+    } else {
+        expandedJobs.add(jobId);
+        details.style.display = "block";
+        if(btn) btn.textContent = "▾";
+    }
+
+}
+
+
+async function downloadAudio(url, filename){
+
+    try {
+
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(blobUrl);
+
+    } catch (err) {
+        console.error("Download fehlgeschlagen:", err);
+        alert("Download fehlgeschlagen. Siehe Konsole für Details.");
+    }
+
+}
+
+
+async function deleteJob(jobId){
+
+    try {
+
+        const response = await fetch(
+            BACKEND + "/jobs/" + jobId,
+            {
+                method: "DELETE"
+            }
+        );
+
+
+        if(response.ok){
+
+            console.log(
+                "Job gelöscht:",
+                jobId
+            );
+
+            loadJobs();
+
+        }
+        else{
+
+            console.error(
+                "Löschen fehlgeschlagen"
+            );
+
+        }
+
+
+    } catch(error){
+
+        console.error(
+            "Fehler:",
+            error
+        );
+
+    }
+
+}
+
+async function holdJob(jobId){
+
+    await fetch(
+        BACKEND + "/jobs/" + jobId + "/hold",
+        {
+            method:"POST"
+        }
+    );
+
+    await loadJobs();
+
+}
+
+async function resumeJob(jobId){
+
+    await fetch(
+        BACKEND + "/jobs/" + jobId + "/resume",
+        {
+            method:"POST"
+        }
+    );
+
+    await loadJobs();
+
+}
+
+
+function moveJobUp(jobId){
+
+    let index = jobs.findIndex(
+        job => job.id === jobId
+    );
+
+
+    if(index <= 0){
+        return;
+    }
+
+
+    let movedJob = jobs[index];
+
+
+    let temp = jobs[index];
+
+    jobs[index] = jobs[index - 1];
+
+    jobs[index - 1] = temp;
+
+
+    renderJobs();
+
+
+    let element = [...document.querySelectorAll(".job-item")]
+        .find(el => el.innerHTML.includes("ID: " + movedJob.id));
+
+
+if(element){
+
+    element.classList.add("highlight");
+
+    setTimeout(()=>{
+
+        element.classList.remove("highlight");
+
+    },2500);
+
+}
+
+}
+
+
+
+function moveJobDown(jobId){
+
+    let index = jobs.findIndex(
+        job => job.id === jobId
+    );
+
+
+    if(index === -1 || index >= jobs.length - 1){
+        return;
+    }
+
+
+    let movedJob = jobs[index];
+
+
+    let temp = jobs[index];
+
+    jobs[index] = jobs[index + 1];
+
+    jobs[index + 1] = temp;
+
+
+    renderJobs();
+
+
+    let element = [...document.querySelectorAll(".job-item")]
+        .find(el => el.innerHTML.includes("ID: " + movedJob.id));
+
+
+ if(element){
+
+    element.classList.add("highlight");
+
+    setTimeout(()=>{
+
+        element.classList.remove("highlight");
+
+    },2500);
+
+}
+
+}
+
+
+async function cancelJob(jobId){
+
+    if(!confirm("Diesen Renderjob wirklich abbrechen?")){
+        return;
+    }
+
+    await fetch(
+        BACKEND + "/jobs/" + jobId + "/cancel",
+        {
+            method:"POST"
+        }
+    );
+
+    await loadJobs();
+
+}
+
+const textStats =
+document.getElementById("text_stats");
+
+
+
+
+function updateTextStats(text, filename="-") {
+
+    let chars = text.length;
+
+    let words = text
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .length;
+
+    let paragraphs = text
+        .split(/\n+/)
+        .filter(line => line.trim() !== "")
+        .length;
+
+    // Längsten Satz ermitteln (gleiche Logik wie im xtts_server.py)
+    const sentences = text
+        .trim()
+        .split(/(?<=[.!?])\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+    const longestSentence = sentences.length > 0
+        ? Math.max(...sentences.map(s => s.length))
+        : chars;
+
+    const overLimit = longestSentence > XTTS_LIMIT;
+
+    const longestHtml = overLimit
+        ? "<span style='color:#dc3545; font-weight:600;'>" + longestSentence + "/" + XTTS_LIMIT + " ⚠</span>"
+        : "<span style='color:#2ecc71;'>" + longestSentence + "/" + XTTS_LIMIT + "</span>";
+
+    textStats.innerHTML =
+    "Datei: " + filename +
+    "<br>Zeichen: " + chars +
+    "<br>Längster Satz: " + longestHtml +
+    "<br>Wörter: " + words +
+    "<br>Absätze: " + paragraphs;
+
+}
+
+
+textFile.addEventListener(
+"change",
+function(){
+
+    fileInputMode.checked = true;
+    updateTextMode();
+
+    const file = this.files[0];
+
+    if(!file){
+        textArea.value = "";
+        textEditor.innerHTML = "";
+        totalChars = 0;
+        return;
+    }
+
+
+    const reader = new FileReader();
+
+
+ reader.onload = function(event){
+
+    const text = event.target.result;
+
+    textArea.value = text;
+    textEditor.innerHTML = highlightLongSentences(text);
+
+    totalChars = text.length;
+
+    updateTextStats(
+        text,
+        file.name
+    );
+
+    console.log(
+        "Rendergröße:",
+        totalChars,
+        "Zeichen"
+    );
+
+};
+
+
+    reader.readAsText(file, "UTF-8");
+
+});
+
+
+
+function updateTextMode(){
+
+    if(textInputMode.checked){
+
+        setEditorDisabled(false);
+        textArea.disabled = false;
+        textFile.disabled = true;
+
+    }
+    else{
+
+        setEditorDisabled(true);
+        textArea.disabled = true;
+        textFile.disabled = false;
+
+    }
+
+}
+
+textInputMode.addEventListener(
+"change",
+updateTextMode
+);
+
+
+fileInputMode.addEventListener(
+"change",
+updateTextMode
+);
+
+
+
+updateTextMode();
+
+/* ---------------------------
+   Sprecher Auswahl
+---------------------------- */
+
+
+const standardSpeaker =
+document.getElementById(
+"standard_speaker"
+);
+
+
+const customSpeaker =
+document.getElementById(
+"custom_speaker"
+);
+
+
+
+
+
+const voiceSample =
+document.getElementById(
+"voice_sample"
+);
+
+
+
+const speakerPreview =
+document.getElementById(
+"speaker_preview"
+);
+
+
+
+function updateSpeakerMode(){
+
+    if(standardSpeaker.checked){
+
+        search.disabled = false;
+        voiceSample.disabled = true;
+
+        search.style.backgroundColor = "";
+
+    }
+    else{
+
+        search.disabled = true;
+        list.innerHTML = "";
+
+        voiceSample.disabled = false;
+
+        search.style.backgroundColor = "#e8e8e8";
+
+    }
+
+}
+
+
+
+standardSpeaker.addEventListener(
+"change",
+updateSpeakerMode
+);
+
+
+
+customSpeaker.addEventListener(
+"change",
+updateSpeakerMode
+);
+
+
+
+updateSpeakerMode();
+
+loadJobs();
+
+setInterval(loadJobs, 2000);
+
+// Watchdog alle 3 Sekunden pollen (etwas seltener als die Job-Liste)
+pollWatchdog();
+setInterval(pollWatchdog, 3000);
+</script>
+
+</body>
+</html>

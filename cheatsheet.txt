@@ -1,0 +1,85 @@
+docker compose run --rm xtts python -c "
+from TTS.api import TTS
+
+# Text aus Datei laden
+with open('/input/text.txt', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+# XTTS v2 laden
+tts = TTS('tts_models/multilingual/multi-dataset/xtts_v2')
+
+tts.tts_to_file(
+    text=text,
+
+    # eingebaute Stimme
+    speaker='Ana Florence',
+
+    # oder eigene Referenzstimme:
+    # speaker_wav='/input/meine_stimme.wav',
+
+    # Sprache
+    language='en',
+
+    # Sprechtempo
+    speed=0.85,
+
+    # Zufälligkeit der Stimme
+    temperature=0.7,
+
+    # maximale Wiederholungsvermeidung
+    repetition_penalty=5.0,
+
+    # Auswahlbreite der möglichen Laute
+    top_k=50,
+
+    # Wahrscheinlichkeitsschwelle
+    top_p=0.85,
+
+    # Sätze automatisch trennen
+    split_sentences=True,
+
+    # Ausgabe
+    file_path='/output/test.wav'
+)
+"
+
+
+
+
+
+
+
+Bedeutung der Parameter:
+Parameter	                Wirkung	                     typische Werte
+temperature	        Kreativität/Variation der Stimme	    0.3 - 0.8
+	                niedriger = gleichmäßiger, ruhiger	
+	            höher = lebendiger, aber manchmal unruhiger	
+speed	                Sprechgeschwindigkeit	            0.8 - 1.0
+top_k	            Anzahl möglicher Kandidaten	             20 - 100
+top_p	            Auswahlwahrscheinlichkeit	            0.7 - 0.95
+repetition_penalty	verhindert Wiederholungen	                2 - 10
+split_sentences	    lange Texte in Sätze zerlegen	            True
+
+
+
+ruhiger Erzähler:
+
+speed=0.85
+temperature=0.5
+top_p=0.8
+top_k=50
+repetition_penalty=5.0
+
+
+etwas lebendiger:
+speed=0.9
+temperature=0.7
+top_p=0.9
+top_k=80
+
+
+
+
+
+
+
