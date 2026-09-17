@@ -19,8 +19,12 @@ The project provides:
 * Docker Compose
 * A machine with enough RAM and CPU resources for XTTS v2
 * A browser for the frontend
+* **Developed and tested on a Raspberry Pi 4B**
+
+This project was developed and tested on a **Raspberry Pi 4B** using CPU-based XTTS. It should also work on other Linux systems with sufficient resources, but performance may vary depending on the hardware.
 
 This project currently uses **CPU-based XTTS**.
+
 
 ## Project structure
 
