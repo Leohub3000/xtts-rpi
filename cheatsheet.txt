@@ -1,68 +1,84 @@
+```text
+XTTS v2 – Example command
+
 docker compose run --rm xtts python -c "
 from TTS.api import TTS
 
-# Text aus Datei laden
+# Load text from file
 with open('/input/text.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
-# XTTS v2 laden
+# Load XTTS v2
 tts = TTS('tts_models/multilingual/multi-dataset/xtts_v2')
 
 tts.tts_to_file(
     text=text,
 
-    # eingebaute Stimme
+    # Built-in voice
     speaker='Ana Florence',
 
-    # oder eigene Referenzstimme:
-    # speaker_wav='/input/meine_stimme.wav',
+    # Or use a custom reference voice:
+    # speaker_wav='/input/my_voice.wav',
 
-    # Sprache
+    # Language
     language='en',
 
-    # Sprechtempo
+    # Speech speed
     speed=0.85,
 
-    # Zufälligkeit der Stimme
+    # Voice variation / randomness
     temperature=0.7,
 
-    # maximale Wiederholungsvermeidung
+    # Reduces unwanted repetitions
     repetition_penalty=5.0,
 
-    # Auswahlbreite der möglichen Laute
+    # Number of possible candidates considered
     top_k=50,
 
-    # Wahrscheinlichkeitsschwelle
+    # Probability threshold for candidate selection
     top_p=0.85,
 
-    # Sätze automatisch trennen
+    # Automatically split long texts into sentences
     split_sentences=True,
 
-    # Ausgabe
+    # Output
     file_path='/output/test.wav'
 )
 "
 
 
+Parameter overview
+-------------------
+
+temperature
+    Voice variation / randomness
+    Typical range: 0.3 - 0.8
+    Lower = more consistent and calm
+    Higher = more variation, but can sound less stable
+
+speed
+    Speech speed
+    Typical range: 0.8 - 1.0
+
+top_k
+    Number of possible candidates considered
+    Typical range: 20 - 100
+
+top_p
+    Probability threshold for candidate selection
+    Typical range: 0.7 - 0.95
+
+repetition_penalty
+    Helps prevent unwanted repetitions
+    Typical range: 2 - 10
+
+split_sentences
+    Automatically splits longer texts into sentences
+    True
 
 
-
-
-
-Bedeutung der Parameter:
-Parameter	                Wirkung	                     typische Werte
-temperature	        Kreativität/Variation der Stimme	    0.3 - 0.8
-	                niedriger = gleichmäßiger, ruhiger	
-	            höher = lebendiger, aber manchmal unruhiger	
-speed	                Sprechgeschwindigkeit	            0.8 - 1.0
-top_k	            Anzahl möglicher Kandidaten	             20 - 100
-top_p	            Auswahlwahrscheinlichkeit	            0.7 - 0.95
-repetition_penalty	verhindert Wiederholungen	                2 - 10
-split_sentences	    lange Texte in Sätze zerlegen	            True
-
-
-
-ruhiger Erzähler:
+Example: calm narrator
+----------------------
 
 speed=0.85
 temperature=0.5
@@ -71,15 +87,11 @@ top_k=50
 repetition_penalty=5.0
 
 
-etwas lebendiger:
+Example: slightly more lively
+-----------------------------
+
 speed=0.9
 temperature=0.7
 top_p=0.9
 top_k=80
-
-
-
-
-
-
-
+```
